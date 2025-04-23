@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Social Media Automation Project Questionnaire</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #f8fafc;
+      color: #1a202c;
+    }
+    .fa-solid, .fa-regular, .fa-brands {
+      margin-right: 6px;
+      color: #2563eb;
+    }
+    label.required:after {
+      content: " *";
+      color: #dc2626;
+    }
+    /* Remove focus outlines for PDF export optimization */
+    *:focus { outline: none; }
+    /* Remove scrollbars */
+    ::-webkit-scrollbar {
+      width: 0 !important
+    }
+    html, body {
+      overflow: auto !important;
+    }
+    /* Hide number input arrows for cleaner PDF */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none;
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance:textfield;
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md px-8 py-10 mt-8 mb-8">
+    <div class="flex items-center mb-6">
+      <i class="fa-solid fa-paper-plane text-blue-600 text-3xl"></i>
+      <h1 class="text-2xl md:text-3xl font-bold text-blue-700 ml-3">Social Media Automation Project Questionnaire</h1>
+    </div>
+    <p class="mb-8 text-gray-600 text-sm md:text-base">
+      Please complete this professional questionnaire to help us understand your social media automation project needs. Your email will be used to contact you about your project. All information remains confidential.
+    </p>
+    <form action="https://formspree.io/f/mrbqgkww" method="POST" class="space-y-6">
+      <div>
+        <label for="email" class="block font-medium required mb-1 text-blue-700"><i class="fa-solid fa-envelope"></i>Email Address</label>
+        <input type="email" id="email" name="Email" required class="w-full px-4 py-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-200" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div>
+        <label for="name" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-user"></i>Your Name</label>
+        <input type="text" id="name" name="Name" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="Full Name (optional)" autocomplete="name">
+      </div>
+      <div>
+        <label for="company" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-building"></i>Company / Organization</label>
+        <input type="text" id="company" name="Company" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="Company Name (optional)">
+      </div>
+      <div>
+        <label class="block font-medium mb-2 text-blue-700"><i class="fa-brands fa-hashtag"></i>Which social media platforms do you want to automate?</label>
+        <div class="flex flex-wrap gap-4">
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="Facebook" class="text-blue-600" />
+            <span><i class="fa-brands fa-facebook-f"></i>Facebook</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="Instagram" class="text-pink-500" />
+            <span><i class="fa-brands fa-instagram"></i>Instagram</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="Twitter/X" class="text-blue-400" />
+            <span><i class="fa-brands fa-x-twitter"></i>Twitter/X</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="LinkedIn" class="text-blue-700" />
+            <span><i class="fa-brands fa-linkedin-in"></i>LinkedIn</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="TikTok" class="text-black" />
+            <span><i class="fa-brands fa-tiktok"></i>TikTok</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="YouTube" class="text-red-600" />
+            <span><i class="fa-brands fa-youtube"></i>YouTube</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="Rumble" class="text-green-700" />
+            <span><i class="fa-regular fa-circle-play"></i>Rumble</span>
+          </label>
+          <label class="flex items-center space-x-1">
+            <input type="checkbox" name="Platforms" value="Other" />
+            <span>Other</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <label for="goals" class="block font-medium required mb-1 text-blue-700"><i class="fa-solid fa-bullseye"></i>Project Goals</label>
+        <textarea id="goals" name="Project Goals" required class="w-full px-4 py-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-200 resize-none" rows="3" placeholder="Briefly describe what you aim to automate or achieve (e.g., scheduled posting, analytics, responding to messages, etc.)"></textarea>
+      </div>
+      <div>
+        <label for="integrations" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-plug"></i>Do you need integration with other tools or platforms?</label>
+        <input type="text" id="integrations" name="Integrations" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="e.g., CRM, Email Marketing, Slack (optional)">
+      </div>
+      <div>
+        <label for="budget" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-money-bill-wave"></i>Estimated Budget</label>
+        <select id="budget" name="Estimated Budget" class="w-full px-4 py-2 border border-blue-200 rounded">
+          <option value="">Select range (optional)</option>
+          <option value="<$1,000">Less than $1,000</option>
+          <option value="$1,000 - $3,000">$1,000 - $3,000</option>
+          <option value="$3,000 - $10,000">$3,000 - $10,000</option>
+          <option value="$10,000+">$10,000+</option>
+        </select>
+      </div>
+      <div>
+        <label for="timeline" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-calendar-days"></i>Desired Timeline</label>
+        <input type="text" id="timeline" name="Desired Timeline" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="e.g., 2 months, ASAP, flexible (optional)">
+      </div>
+      <div>
+        <label for="comments" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-comments"></i>Additional Comments</label>
+        <textarea id="comments" name="Additional Comments" class="w-full px-4 py-2 border border-blue-200 rounded resize-none" rows="2" placeholder="Any other information or requirements? (optional)"></textarea>
+      </div>
+      <div class="flex justify-center">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg px-8 py-2 rounded shadow-md transition duration-150 flex items-center">
+          <i class="fa-solid fa-paper-plane mr-2"></i>Submit Questionnaire
+        </button>
+      </div>
+      <!-- Anti-bot for Formspree -->
+      <input type="text" name="_gotcha" style="display:none">
+    </form>
+    <div class="mt-8 text-center text-xs text-gray-400">
+      &copy; 2024 Social Media Automation | All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+
