@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -18,6 +19,7 @@
             --bg-dark: #080808;
             --text-light: #ffffff;
             --text-dim: #888888;
+            --section-bg: rgba(255, 255, 255, 0.03);
         }
         
         * {
@@ -144,6 +146,31 @@
             transform: translateY(20px);
         }
         
+        .form-section-divider {
+            background-color: var(--section-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 1rem;
+        }
+        
+        .section-label {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
         label {
             display: block;
             margin-bottom: 0.75rem;
@@ -173,6 +200,45 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
         
+        /* Fix for white dropdown menus */
+        select.form-control {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            appearance: none; /* Remove default arrow */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23ffffff" viewBox="0 0 16 16"><path d="M7.247 12.64 2.451 7.158C1.885 6.513 2.345 5.5 3.204 5.5h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: calc(100% - 15px) center;
+            padding-right: 40px; /* Space for the custom arrow */
+        }
+        
+        /* Style for dropdown options */
+        select.form-control option {
+            background-color: var(--secondary);
+            color: var(--text-light);
+        }
+        
+        /* Fix for dropdown hover state */
+        select.form-control:hover, 
+        select.form-control:focus {
+            border-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Safari-specific fixes */
+        @media screen and (-webkit-min-device-pixel-ratio:0) { 
+            select.form-control {
+                padding-right: 40px;
+            }
+        }
+        
+        /* Firefox-specific fixes */
+        @-moz-document url-prefix() {
+            select.form-control {
+                text-indent: 0.01px;
+                text-overflow: '';
+            }
+        }
+        
         textarea.form-control {
             min-height: 120px;
         }
@@ -192,7 +258,7 @@
         
         .checkbox-item input {
             width: 0;
-            height: a;
+            height: 0; /* Fixed from "height: a;" */
             position: absolute;
             opacity: 0;
         }
@@ -247,6 +313,18 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--text-light);
+            margin-right: 1rem;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+        
         .required-field::after {
             content: '*';
             color: var(--accent);
@@ -287,6 +365,344 @@
             filter: blur(80px);
         }
         
+        /* Progress bar styling */
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Save & continue button */
+        .save-continue {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+        }
+        
+        /* AI features section */
+        .ai-feature-card {
+            background-color: rgba(8, 32, 50, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-feature-card:hover {
+            background-color: rgba(8, 32, 50, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        
+        .ai-feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-feature-card h3 i {
+            color: var(--primary);
+            margin-right: 0.75rem;
+        }
+        
+        .ai-feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-toggle {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-right: 1rem;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        .toggle-label {
+            font-size: 0.9rem;
+        }
+        
+        /* Platform buttons styling */
+        .platform-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(8, 32, 50, 0.4);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .platform-btn i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+        }
+        
+        .platform-btn span {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+        }
+        
+        .platform-btn:hover,
+        .platform-btn.active {
+            background-color: rgba(37, 99, 235, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .platform-btn:hover i,
+        .platform-btn:hover span,
+        .platform-btn.active i,
+        .platform-btn.active span {
+            color: var(--text-light);
+        }
+        
+        .platform-btn.active i {
+            color: var(--primary);
+        }
+        
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Content generation examples */
+        .content-example {
+            background-color: rgba(8, 32, 50, 0.4);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .example-platform {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example-platform i {
+            margin-right: 0.5rem;
+        }
+        
+        .example-content {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+        
+        .example-stats {
+            display: flex;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        
+        .example-stat {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+        }
+        
+        .example-stat i {
+            margin-right: 0.25rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Analytics preview */
+        .analytics-preview {
+            background-color: rgba(8, 32, 50, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .analytics-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .analytics-title i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+        
+        .analytics-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 0.5rem;
+        }
+        
+        /* Schedule grid */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .schedule-day {
+            background-color: rgba(8, 32, 50, 0.4);
+            border-radius: 8px;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .day-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .time-slot {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 0.25rem;
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .time-slot:hover {
+            background-color: rgba(37, 99, 235, 0.2);
+        }
+        
+        .time-slot.active {
+            background-color: var(--primary);
+        }
+        
+        .thank-you-screen {
+            display: none;
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .thank-you-icon {
+            font-size: 5rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+        
+        .thank-you-title {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .thank-you-message {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5rem;
@@ -296,6 +712,20 @@
             }
             .checkbox-group {
                 gap: 1rem;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .platforms-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .schedule-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(4, auto);
+            }
+            .schedule-day:nth-child(7) {
+                grid-column: 1 / span 2;
             }
         }
     </style>
@@ -312,7 +742,7 @@
         
         <section class="intro">
             <h1>SOCIAL MEDIA <span>AUTOMATION</span></h1>
-            <p class="subtitle">Transform your social presence with our cutting-edge automation solutions. Complete the questionnaire below to get started.</p>
+            <p class="subtitle">Transform your social presence with our cutting-edge AI automation solutions. Complete the questionnaire below to get started.</p>
         </section>
         
         <section class="form-section">
@@ -323,109 +753,422 @@
                 <h2 class="section-title">PROJECT QUESTIONNAIRE</h2>
                 <p style="margin-bottom: 2rem;">Please complete this professional questionnaire to help us understand your social media automation project needs. Your email will be used to contact you about your project. All information remains confidential.</p>
                 
+                <div class="progress-info">
+                    <div class="progress-percentage">0% Complete</div>
+                    <div class="progress-time">Estimated time: 5 minutes</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="form-progress"></div>
+                </div>
+                
+                <div class="save-continue">
+                    <button type="button" class="btn btn-outline" id="save-form">Save Progress</button>
+                    <a href="#" class="btn btn-outline" style="display: none;" id="share-link">Copy Link</a>
+                </div>
+                
                 <form id="automation-form">
-                    <div class="form-group">
-                        <label for="email" class="required-field"><i class="fas fa-envelope"></i> Email Address</label>
-                        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="name"><i class="fas fa-user"></i> Your Name</label>
-                        <input type="text" id="name" class="form-control" placeholder="Full Name (optional)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="company"><i class="fas fa-building"></i> Company / Organization</label>
-                        <input type="text" id="company" class="form-control" placeholder="Company Name (optional)">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="platforms"><i class="fas fa-hashtag"></i> Which social media platforms do you want to automate?</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="Facebook">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-facebook"></i> Facebook
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="Instagram">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-instagram"></i> Instagram
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="Twitter">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-twitter"></i> Twitter/X
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="LinkedIn">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-linkedin"></i> LinkedIn
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="TikTok">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-tiktok"></i> TikTok
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="YouTube">
-                                <span class="custom-checkbox"></span>
-                                <i class="fab fa-youtube"></i> YouTube
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="Rumble">
-                                <span class="custom-checkbox"></span>
-                                <i class="fas fa-video"></i> Rumble
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="platforms" value="Other">
-                                <span class="custom-checkbox"></span>
-                                <i class="fas fa-plus-circle"></i> Other
-                            </label>
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-user-circle"></i></div>
+                            <div class="section-label">Contact Information</div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col form-group">
+                                <label for="email" class="required-field"><i class="fas fa-envelope"></i> Email Address</label>
+                                <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+                            </div>
+                            
+                            <div class="form-col form-group">
+                                <label for="name"><i class="fas fa-user"></i> Your Name</label>
+                                <input type="text" id="name" class="form-control" placeholder="Full Name (optional)">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="company"><i class="fas fa-building"></i> Company / Organization</label>
+                            <input type="text" id="company" class="form-control" placeholder="Company Name (optional)">
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="goals" class="required-field"><i class="fas fa-bullseye"></i> Project Goals</label>
-                        <textarea id="goals" class="form-control" placeholder="Briefly describe what you aim to automate or achieve (e.g., scheduled posting, analytics, responding to messages, etc.)" required></textarea>
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-hashtag"></i></div>
+                            <div class="section-label">Social Media Platforms</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-comments"></i> Which social media platforms do you want to automate?</label>
+                            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-dim);">Select the platforms where you want to implement automation. Our AI will tailor solutions for each platform.</p>
+                            
+                            <div class="platforms-grid">
+                                <div class="platform-btn" data-platform="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                    <span>Facebook</span>
+                                </div>
+                                <div class="platform-btn" data-platform="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>Instagram</span>
+                                </div>
+                                <div class="platform-btn" data-platform="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                    <span>Twitter/X</span>
+                                </div>
+                                <div class="platform-btn" data-platform="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                    <span>LinkedIn</span>
+                                </div>
+                                <div class="platform-btn" data-platform="TikTok">
+                                    <i class="fab fa-tiktok"></i>
+                                    <span>TikTok</span>
+                                </div>
+                                <div class="platform-btn" data-platform="YouTube">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>YouTube</span>
+                                </div>
+                                <div class="platform-btn" data-platform="Pinterest">
+                                    <i class="fab fa-pinterest-p"></i>
+                                    <span>Pinterest</span>
+                                </div>
+                                <div class="platform-btn" data-platform="Rumble">
+                                    <i class="fas fa-video"></i>
+                                    <span>Rumble</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden checkboxes for form submission -->
+                            <div style="display: none;">
+                                <input type="checkbox" name="platforms" value="Facebook" id="platform-Facebook">
+                                <input type="checkbox" name="platforms" value="Instagram" id="platform-Instagram">
+                                <input type="checkbox" name="platforms" value="Twitter" id="platform-Twitter">
+                                <input type="checkbox" name="platforms" value="LinkedIn" id="platform-LinkedIn">
+                                <input type="checkbox" name="platforms" value="TikTok" id="platform-TikTok">
+                                <input type="checkbox" name="platforms" value="YouTube" id="platform-YouTube">
+                                <input type="checkbox" name="platforms" value="Pinterest" id="platform-Pinterest">
+                                <input type="checkbox" name="platforms" value="Rumble" id="platform-Rumble">
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="integration"><i class="fas fa-plug"></i> Do you need integration with other tools or platforms?</label>
-                        <input type="text" id="integration" class="form-control" placeholder="e.g., CRM, Email Marketing, Slack (optional)">
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-robot"></i></div>
+                            <div class="section-label">AI Content Generation</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-magic"></i> What type of content would you like our AI to generate?</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Posts">
+                                    <span class="custom-checkbox"></span>
+                                    Text Posts
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Captions">
+                                    <span class="custom-checkbox"></span>
+                                    Image Captions
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Comments">
+                                    <span class="custom-checkbox"></span>
+                                    Engagement Comments
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Hashtags">
+                                    <span class="custom-checkbox"></span>
+                                    Hashtag Research
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Headlines">
+                                    <span class="custom-checkbox"></span>
+                                    Article Headlines
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="content-types" value="Video">
+                                    <span class="custom-checkbox"></span>
+                                    Video Scripts
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="brand-voice"><i class="fas fa-bullhorn"></i> How would you describe your brand voice?</label>
+                            <select id="brand-voice" class="form-control">
+                                <option value="">Select your brand personality...</option>
+                                <option value="Professional">Professional & Authoritative</option>
+                                <option value="Friendly">Friendly & Approachable</option>
+                                <option value="Humorous">Humorous & Entertaining</option>
+                                <option value="Inspirational">Inspirational & Motivational</option>
+                                <option value="Educational">Educational & Informative</option>
+                                <option value="Bold">Bold & Disruptive</option>
+                                <option value="Luxury">Luxury & Exclusive</option>
+                                <option value="Custom">Custom Voice (describe below)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="brand-details"><i class="fas fa-file-alt"></i> Additional brand voice details</label>
+                            <textarea id="brand-details" class="form-control" placeholder="Describe your brand voice in more detail, including examples of messaging you like or topics you want to focus on..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-eye"></i> Content Example Preview</label>
+                            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-dim);">Here's an example of AI-generated content based on the brand voice you selected:</p>
+                            
+                            <div class="content-example" id="content-example">
+                                <div class="example-platform">
+                                    <i class="fab fa-instagram"></i> Instagram Post
+                                </div>
+                                <div class="example-content">
+                                    Select a brand voice above to see an AI-generated content example.
+                                </div>
+                                <div class="example-stats">
+                                    <div class="example-stat">
+                                        <i class="fas fa-heart"></i> 215
+                                    </div>
+                                    <div class="example-stat">
+                                        <i class="fas fa-comment"></i> 32
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="budget"><i class="fas fa-wallet"></i> Estimated Budget</label>
-                        <select id="budget" class="form-control">
-                            <option value="">Select range (optional)</option>
-                            <option value="Under $1,000">Under $1,000</option>
-                            <option value="$1,000 - $5,000">$1,000 - $5,000</option>
-                            <option value="$5,000 - $10,000">$5,000 - $10,000</option>
-                            <option value="$10,000 - $20,000">$10,000 - $20,000</option>
-                            <option value="$20,000+">$20,000+</option>
-                        </select>
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="section-label">Automation Features</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-cogs"></i> Which automation features do you need?</label>
+                            
+                            <div class="ai-feature-card">
+                                <h3><i class="fas fa-calendar-alt"></i> Smart Scheduling</h3>
+                                <p>Our AI analyzes your audience's peak engagement times and automatically schedules posts for maximum reach and engagement.</p>
+                                <div class="feature-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="features" value="Smart-Scheduling">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label">Enable Smart Scheduling</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-feature-card">
+                                <h3><i class="fas fa-comment-dots"></i> Automated Engagement</h3>
+                                <p>AI-powered responses to comments and messages maintain audience connections even when you're offline.</p>
+                                <div class="feature-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="features" value="Automated-Engagement">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label">Enable Automated Engagement</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-feature-card">
+                                <h3><i class="fas fa-chart-pie"></i> Performance Analytics</h3>
+                                <p>Comprehensive analytics that track engagement, reach, and conversion metrics with AI-powered improvement suggestions.</p>
+                                <div class="feature-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="features" value="Performance-Analytics">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label">Enable Performance Analytics</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-feature-card">
+                                <h3><i class="fas fa-search"></i> Competitor Analysis</h3>
+                                <p>Monitor competitors' strategies and performance to refine your social media approach and identify opportunities.</p>
+                                <div class="feature-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="features" value="Competitor-Analysis">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label">Enable Competitor Analysis</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-feature-card">
+                                <h3><i class="fas fa-hashtag"></i> Hashtag Optimization</h3>
+                                <p>AI-driven hashtag research and analysis to maximize post visibility and reach relevant audiences.</p>
+                                <div class="feature-toggle">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" name="features" value="Hashtag-Optimization">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label">Enable Hashtag Optimization</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="analytics-preview"><i class="fas fa-chart-bar"></i> Analytics Preview</label>
+                            <div class="analytics-preview">
+                                <div class="analytics-title">
+                                    <i class="fas fa-chart-line"></i> Sample Performance Insights
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="analyticsChart"></canvas>
+                                </div>
+                                <div class="analytics-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: rgba(37, 99, 235, 0.7);"></div>
+                                        Engagement Rate
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: rgba(255, 76, 41, 0.7);"></div>
+                                        Reach
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: rgba(255, 193, 7, 0.7);"></div>
+                                        Conversions
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="timeline"><i class="fas fa-calendar"></i> Desired Timeline</label>
-                        <input type="text" id="timeline" class="form-control" placeholder="e.g., 2 months, ASAP, flexible (optional)">
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-calendar-week"></i></div>
+                            <div class="section-label">Posting Schedule</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> Preferred posting frequency</label>
+                            <select id="post-frequency" class="form-control">
+                                <option value="">Select posting frequency...</option>
+                                <option value="daily">Daily (once per day)</option>
+                                <option value="multiple-daily">Multiple times daily</option>
+                                <option value="few-weekly">Few times per week</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="bi-weekly">Bi-weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="ai-recommend">Let AI recommend optimal frequency</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-day"></i> Preferred posting days</label>
+                            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-dim);">Select time slots when your content should be published. Our AI will optimize exact timing within these slots.</p>
+                            
+                            <div class="schedule-grid">
+                                <div class="schedule-day">
+                                    <div class="day-name">Monday</div>
+                                    <div class="time-slot" data-day="monday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="monday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="monday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Tuesday</div>
+                                    <div class="time-slot" data-day="tuesday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="tuesday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="tuesday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Wednesday</div>
+                                    <div class="time-slot" data-day="wednesday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="wednesday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="wednesday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Thursday</div>
+                                    <div class="time-slot" data-day="thursday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="thursday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="thursday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Friday</div>
+                                    <div class="time-slot" data-day="friday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="friday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="friday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Saturday</div>
+                                    <div class="time-slot" data-day="saturday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="saturday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="saturday" data-time="evening">Evening</div>
+                                </div>
+                                <div class="schedule-day">
+                                    <div class="day-name">Sunday</div>
+                                    <div class="time-slot" data-day="sunday" data-time="morning">Morning</div>
+                                    <div class="time-slot" data-day="sunday" data-time="afternoon">Afternoon</div>
+                                    <div class="time-slot" data-day="sunday" data-time="evening">Evening</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden input for schedule data -->
+                            <input type="hidden" id="schedule-data" name="schedule">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="comments"><i class="fas fa-comment"></i> Additional Comments</label>
-                        <textarea id="comments" class="form-control" placeholder="Any other information or requirements? (optional)"></textarea>
+                    <div class="form-section-divider">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fas fa-project-diagram"></i></div>
+                            <div class="section-label">Project Details</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="goals" class="required-field"><i class="fas fa-bullseye"></i> Project Goals</label>
+                            <textarea id="goals" class="form-control" placeholder="Briefly describe what you aim to achieve with social media automation (e.g., increase brand awareness, drive website traffic, generate leads, etc.)" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col form-group">
+                                <label for="integration"><i class="fas fa-plug"></i> Integration Requirements</label>
+                                <input type="text" id="integration" class="form-control" placeholder="e.g., CRM, Email Marketing, Website (optional)">
+                            </div>
+                            
+                            <div class="form-col form-group">
+                                <label for="timeline"><i class="fas fa-calendar"></i> Desired Timeline</label>
+                                <select id="timeline" class="form-control">
+                                    <option value="">Select desired timeline...</option>
+                                    <option value="immediate">As soon as possible</option>
+                                    <option value="2-weeks">Within 2 weeks</option>
+                                    <option value="1-month">Within 1 month</option>
+                                    <option value="2-3-months">2-3 months</option>
+                                    <option value="flexible">Flexible timeline</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="budget"><i class="fas fa-wallet"></i> Estimated Budget</label>
+                            <select id="budget" class="form-control">
+                                <option value="">Select budget range (optional)</option>
+                                <option value="Under $1,000">Under $1,000</option>
+                                <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+                                <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                                <option value="$10,000 - $20,000">$10,000 - $20,000</option>
+                                <option value="$20,000+">$20,000+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="comments"><i class="fas fa-comment"></i> Additional Comments</label>
+                            <textarea id="comments" class="form-control" placeholder="Any other information, specific requirements, or questions? (optional)"></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group" style="text-align: center;">
                         <button type="submit" class="btn btn-primary">Submit Questionnaire</button>
                     </div>
                 </form>
             </div>
+            
+            <div class="thank-you-screen" id="thank-you-screen">
+                <div class="thank-you-icon"><i class="fas fa-check-circle"></i></div>
+                <h2 class="thank-you-title">Thank You!</h2>
+                <p class="thank-you-message">Your social media automation questionnaire has been submitted successfully. Our team will analyze your needs and contact you soon with a customized proposal. Get ready to transform your social media presence!</p>
+            </div>
         </section>
         
         <footer>
-            © 2024 Social Media Automation | All rights reserved.
+            © 2024 TNL-Media Social Media Automation | All rights reserved.
         </footer>
     </div>
     
@@ -438,7 +1181,7 @@
             cursor.style.top = e.clientY + 'px';
         });
         
-        const hoverElements = document.querySelectorAll('button, input, textarea, select, .checkbox-item, a');
+        const hoverElements = document.querySelectorAll('button, input, textarea, select, .checkbox-item, a, .platform-btn, .time-slot');
         
         hoverElements.forEach(element => {
             element.addEventListener('mouseenter', () => {
@@ -530,6 +1273,316 @@
             renderer.render(scene, camera);
         }
         
+        // Platform buttons
+        const platformButtons = document.querySelectorAll('.platform-btn');
+        
+        platformButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.classList.toggle('active');
+                const platform = button.getAttribute('data-platform');
+                const checkbox = document.getElementById(`platform-${platform}`);
+                checkbox.checked = button.classList.contains('active');
+                updateProgress();
+            });
+        });
+        
+        // Time slots
+        const timeSlots = document.querySelectorAll('.time-slot');
+        const scheduleDataInput = document.getElementById('schedule-data');
+        const selectedSlots = [];
+        
+        timeSlots.forEach(slot => {
+            slot.addEventListener('click', () => {
+                slot.classList.toggle('active');
+                const day = slot.getAttribute('data-day');
+                const time = slot.getAttribute('data-time');
+                const slotId = `${day}-${time}`;
+                
+                if (slot.classList.contains('active')) {
+                    if (!selectedSlots.includes(slotId)) {
+                        selectedSlots.push(slotId);
+                    }
+                } else {
+                    const index = selectedSlots.indexOf(slotId);
+                    if (index !== -1) {
+                        selectedSlots.splice(index, 1);
+                    }
+                }
+                
+                scheduleDataInput.value = JSON.stringify(selectedSlots);
+                updateProgress();
+            });
+        });
+        
+        // Brand voice preview
+        const brandVoiceSelect = document.getElementById('brand-voice');
+        const contentExample = document.getElementById('content-example');
+        
+        brandVoiceSelect.addEventListener('change', () => {
+            const voice = brandVoiceSelect.value;
+            let exampleText = '';
+            
+            if (voice === 'Professional') {
+                exampleText = 'Optimize your business operations with our latest enterprise solution. Our data-driven approach has helped companies achieve 35% productivity increases. #BusinessEfficiency #EnterpriseSolutions';
+            } else if (voice === 'Friendly') {
+                exampleText = 'Hey there! 👋 Just dropped our newest collection and we\'re so excited to share it with you! Check out these amazing pieces and let us know which one\'s your fave! #NewCollection #FashionFinds';
+            } else if (voice === 'Humorous') {
+                exampleText = 'When your coffee kicks in and you realize you\'ve been staring at your screen for 20 minutes... 😂 Don\'t worry, our quick workout routine will get you back on track! #MondayMood #WorkoutWednesday';
+            } else if (voice === 'Inspirational') {
+                exampleText = 'Your journey of a thousand miles begins with a single step. Take that step today and embrace the possibilities that await. ✨ #MondayMotivation #BeginYourJourney';
+            } else if (voice === 'Educational') {
+                exampleText = 'Did you know? The average smartphone user checks their device 58 times daily. Learn how digital minimalism can improve your focus and productivity in our latest article. #DigitalWellness #Productivity';
+            } else if (voice === 'Bold') {
+                exampleText = 'FORGET EVERYTHING YOU KNOW ABOUT MARKETING. 🔥 The old rules are DEAD. Our revolutionary approach is changing the game for forward-thinking brands. Are you ready? #DisruptiveMarketing #GameChanger';
+            } else if (voice === 'Luxury') {
+                exampleText = 'Exquisite craftsmanship meets timeless elegance. Introducing our limited edition collection, where every detail is a testament to unparalleled luxury and sophistication. #LuxuryLifestyle #ExclusiveDesign';
+            } else if (voice === 'Custom') {
+                exampleText = 'Select "Custom Voice" and add details in the text area below to see a personalized example.';
+            } else {
+                exampleText = 'Select a brand voice above to see an AI-generated content example.';
+            }
+            
+            contentExample.querySelector('.example-content').textContent = exampleText;
+            updateProgress();
+        });
+        
+        // Analytics chart
+        function initChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            
+            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
+            const engagementData = [12, 19, 24, 28, 32, 45];
+            const reachData = [30, 52, 75, 90, 120, 175];
+            const conversionData = [2, 4, 7, 12, 15, 22];
+            
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Engagement Rate (%)',
+                            data: engagementData,
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Reach (thousands)',
+                            data: reachData,
+                            borderColor: 'rgba(255, 76, 41, 1)',
+                            backgroundColor: 'rgba(255, 76, 41, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Conversions',
+                            data: conversionData,
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(8, 32, 50, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Form progress tracking
+        function updateProgress() {
+            const form = document.getElementById('automation-form');
+            const formGroups = form.querySelectorAll('.form-group');
+            let totalFields = 0;
+            let completedFields = 0;
+            
+            // Count form fields
+            form.querySelectorAll('input, select, textarea').forEach(field => {
+                if (field.type === 'hidden' || field.style.display === 'none') return;
+                
+                totalFields++;
+                
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    // Handle checkboxes and radios differently
+                    const name = field.name;
+                    const checked = form.querySelectorAll(`input[name="${name}"]:checked`).length > 0;
+                    if (checked) completedFields++;
+                } else if (field.value.trim() !== '') {
+                    completedFields++;
+                }
+            });
+            
+            // Count platform buttons
+            const platformButtonsActive = document.querySelectorAll('.platform-btn.active').length;
+            if (platformButtonsActive > 0) completedFields++;
+            totalFields++;
+            
+            // Count timeslots
+            const timeSlotsActive = document.querySelectorAll('.time-slot.active').length;
+            if (timeSlotsActive > 0) completedFields++;
+            totalFields++;
+            
+            // Count feature toggles
+            const featureToggles = document.querySelectorAll('.feature-toggle input:checked').length;
+            if (featureToggles > 0) completedFields++;
+            totalFields++;
+            
+            const progress = Math.round((completedFields / totalFields) * 100);
+            document.getElementById('form-progress').style.width = `${progress}%`;
+            document.querySelector('.progress-percentage').textContent = `${progress}% Complete`;
+            
+            // Update estimated time
+            const remainingTime = Math.round((5 * (totalFields - completedFields)) / totalFields);
+            document.querySelector('.progress-time').textContent = `Estimated time: ${remainingTime} minutes`;
+        }
+        
+        // Form autosave functionality
+        document.getElementById('save-form').addEventListener('click', function() {
+            const form = document.getElementById('automation-form');
+            const formData = new FormData(form);
+            const formDataObj = {};
+            
+            formData.forEach((value, key) => {
+                formDataObj[key] = value;
+            });
+            
+            // Add platform selections
+            const activePlatforms = [];
+            document.querySelectorAll('.platform-btn.active').forEach(btn => {
+                activePlatforms.push(btn.getAttribute('data-platform'));
+            });
+            formDataObj.selectedPlatforms = activePlatforms;
+            
+            // Add time slots
+            formDataObj.selectedTimeSlots = selectedSlots;
+            
+            const saveData = JSON.stringify(formDataObj);
+            const saveId = btoa(Date.now().toString()).substring(0, 8);
+            
+            localStorage.setItem(`tnl-social-${saveId}`, saveData);
+            
+            const shareLink = `${window.location.origin}${window.location.pathname}?form=${saveId}`;
+            
+            const shareBtn = document.getElementById('share-link');
+            shareBtn.style.display = 'inline-block';
+            shareBtn.href = shareLink;
+            shareBtn.setAttribute('data-link', shareLink);
+            
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                navigator.clipboard.writeText(shareLink)
+                    .then(() => {
+                        alert('Link copied to clipboard! You can continue your form later using this link.');
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                        alert('Link: ' + shareLink);
+                    });
+            });
+            
+            alert('Your form progress has been saved! You can use the "Copy Link" button to share or continue later.');
+        });
+        
+        // Check for saved form data on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const formId = urlParams.get('form');
+            
+            if (formId) {
+                const savedData = localStorage.getItem(`tnl-social-${formId}`);
+                if (savedData) {
+                    const formDataObj = JSON.parse(savedData);
+                    
+                    // Restore form fields
+                    for (const [key, value] of Object.entries(formDataObj)) {
+                        if (key === 'selectedPlatforms' || key === 'selectedTimeSlots') continue;
+                        
+                        const field = document.querySelector(`[name="${key}"], #${key}`);
+                        if (field) {
+                            field.value = value;
+                        }
+                    }
+                    
+                    // Restore platforms
+                    if (formDataObj.selectedPlatforms) {
+                        formDataObj.selectedPlatforms.forEach(platform => {
+                            const btn = document.querySelector(`.platform-btn[data-platform="${platform}"]`);
+                            if (btn) {
+                                btn.classList.add('active');
+                                document.getElementById(`platform-${platform}`).checked = true;
+                            }
+                        });
+                    }
+                    
+                    // Restore time slots
+                    if (formDataObj.selectedTimeSlots) {
+                        formDataObj.selectedTimeSlots.forEach(slotId => {
+                            const [day, time] = slotId.split('-');
+                            const slot = document.querySelector(`.time-slot[data-day="${day}"][data-time="${time}"]`);
+                            if (slot) {
+                                slot.classList.add('active');
+                                selectedSlots.push(slotId);
+                            }
+                        });
+                        scheduleDataInput.value = JSON.stringify(selectedSlots);
+                    }
+                    
+                    // Update brand voice example
+                    if (formDataObj.brandVoice) {
+                        const event = new Event('change');
+                        brandVoiceSelect.dispatchEvent(event);
+                    }
+                    
+                    updateProgress();
+                }
+            }
+            
+            initThree();
+            initChart();
+            initAnimations();
+            
+            // Initialize progress
+            updateProgress();
+        });
+        
         // GSAP animations for form elements
         function initAnimations() {
             gsap.registerPlugin(ScrollTrigger);
@@ -584,27 +1637,64 @@
                 repeat: -1,
                 ease: "none"
             });
+            
+            // Animate section headers
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            
+            sectionHeaders.forEach((header, index) => {
+                gsap.from(header, {
+                    x: -50,
+                    opacity: 0,
+                    duration: 0.8,
+                    scrollTrigger: {
+                        trigger: header,
+                        start: "top 85%"
+                    },
+                    delay: 0.1
+                });
+            });
+            
+            // Animate AI feature cards
+            const featureCards = document.querySelectorAll('.ai-feature-card');
+            
+            featureCards.forEach((card, index) => {
+                gsap.from(card, {
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.7,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%"
+                    },
+                    delay: index * 0.2
+                });
+            });
         }
         
         // Form submission
         document.getElementById('automation-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Thank you for submitting the questionnaire! We will contact you soon.');
-        });
-        
-        // Initialize all
-        window.addEventListener('DOMContentLoaded', () => {
-            initThree();
-            initAnimations();
+            
+            // Hide form section
+            document.querySelector('.form-container').style.display = 'none';
+            
+            // Show thank you screen
+            document.getElementById('thank-you-screen').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
     </script>
 </body>
 </html>
     <script id="html_badge_script1">
         window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
-            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDuvnoRoKJBf%2FeHBYatvqKFZF3vxopvG3FR12D1zBJJoq6XfujxhxrBwPI7qpVD25j2Ctyi23QChlrtbAeEkcrEUZd4cxAGaFUKQRep8LgUUxV13Ixbd0XoYuZLNbsZ9MBzwCkbp4i9UL7W6r0zKSf5KNIssbIfA1%2BsyS9%2FJygsC4ToRrlFkTba7aChDZOloo%2BsSYOyJYkeRdTF6kZCsAls1a%2FqFVmfcnnWb0aVCAVy9ykbwhfFxPgWBal2q26PcrIQKeVXwKRibW2CsZ2ByvoJSsKdGl3gI1AA2wELLEyMPC6VC35ipI8mv4O%2BsbC3b9d34A5JhIhLyO%2FjvByUI0o%2FbASrZqi6XPFXSUGOb63AKZoraIogjh1rKmWv9y1TzQ%2FY%2BYQfseHWGqGTl55QN7HPZLQoEFtgmA79HJp%2FBejzajrK9vcxadNu7ZhqxCSCvnwlOs8iNDO7ZckVr0OXnUdDyQVrDJeIm3nF44d4p2pF4tx8jKPdq522BELoFryhjIGK1OBizZKKbdeQNjHRSerQU%3D";
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDmw6UoVQBlHGB9r6MfWl0rYV3suEesGfCSyxT5CoaNhykWjhKm%2B%2F%2BiNQsudMk%2BkoVVSHmr21M99Dojbi2FN8fSW8xyTEOK3%2BY4RfeYyKH25O66GRbSBobrsyBNIzOkdK9BYg0U5ftOzX4urMbjlyXgjatY6azvhRffRytSSJ1JsGYsjknOReRj3TthZNW%2FoGjs120dofjtUEyeNQrxOidjnLKbof6TPHlFxNa9rMIdblK3AdPiIfGdSEdBpoLAhgriDyyyfAar1HOPeJomCtTZvkgW27UYeAUzoDB0MrdtI5GLbY9DnDQugJqJ7qxyRGHbqSA9xTVgGjasOO6rc4xOlFtE0HcnVij8mqSci1UfWpigV76ieiY0tdbY1iGR%2Fscv5BpaKp9zpQ4lWvDCkBCNB%2BALRUG8DKlP0ieeBGk5qtF3Xd5tY6VYBdZZexNoVdfd17W4kbOaFKfHaXC1BUp%2B62XdYqb9EdN8oYsqlaNr5HWor2FlXQbmeHr0riCw4KHWeE0eQr9LD9pOoNo6Ra1Bo%3D";
         window.__genspark_locale = "en-US";
-        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDuvnoRoKJBf/eHBYatvqKFZF3vxopvG3FR12D1zBJJoq6XfujxhxrBwPI7qpVD25j2Ctyi23QChlrtbAeEkcrEUZd4cxAGaFUKQRep8LgUUxV13Ixbd0XoYuZLNbsZ9MBzwCkbp4i9UL7W6r0zKSf5KNIssbIfA1+syS9/JygsC4ToRrlFkTba7aChDZOloo+sSYOyJYkeRdTF6kZCsAls1a/qFVmfcnnWb0aVCAVy9ykbwhfFxPgWBal2q26PcrIQKeVXwKRibW2CsZ2ByvoJSsKdGl3gI1AA2wELLEyMPC6VC35ipI8mv4O+sbC3b9d34A5JhIhLyO/jvByUI0o/bASrZqi6XPFXSUGOb63AKZoraIogjh1rKmWv9y1TzQ/Y+YQfseHWGqGTl55QN7HPZLQoEFtgmA79HJp/BejzajrK9vcxadNu7ZhqxCSCvnwlOs8iNDO7ZckVr0OXnUdDyQVrDJeIm3nF44d4p2pF4tx8jKPdq522BELoFryhjIGK1OBizZKKbdeQNjHRSerQU=";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDmw6UoVQBlHGB9r6MfWl0rYV3suEesGfCSyxT5CoaNhykWjhKm+/+iNQsudMk+koVVSHmr21M99Dojbi2FN8fSW8xyTEOK3+Y4RfeYyKH25O66GRbSBobrsyBNIzOkdK9BYg0U5ftOzX4urMbjlyXgjatY6azvhRffRytSSJ1JsGYsjknOReRj3TthZNW/oGjs120dofjtUEyeNQrxOidjnLKbof6TPHlFxNa9rMIdblK3AdPiIfGdSEdBpoLAhgriDyyyfAar1HOPeJomCtTZvkgW27UYeAUzoDB0MrdtI5GLbY9DnDQugJqJ7qxyRGHbqSA9xTVgGjasOO6rc4xOlFtE0HcnVij8mqSci1UfWpigV76ieiY0tdbY1iGR/scv5BpaKp9zpQ4lWvDCkBCNB+ALRUG8DKlP0ieeBGk5qtF3Xd5tY6VYBdZZexNoVdfd17W4kbOaFKfHaXC1BUp+62XdYqb9EdN8oYsqlaNr5HWor2FlXQbmeHr0riCw4KHWeE0eQr9LD9pOoNo6Ra1Bo=";
     </script>
     
     <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
