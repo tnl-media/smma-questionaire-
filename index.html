@@ -1,143 +1,611 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Social Media Automation Project Questionnaire</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', Arial, sans-serif;
-      background: #f8fafc;
-      color: #1a202c;
-    }
-    .fa-solid, .fa-regular, .fa-brands {
-      margin-right: 6px;
-      color: #2563eb;
-    }
-    label.required:after {
-      content: " *";
-      color: #dc2626;
-    }
-    /* Remove focus outlines for PDF export optimization */
-    *:focus { outline: none; }
-    /* Remove scrollbars */
-    ::-webkit-scrollbar {
-      width: 0 !important
-    }
-    html, body {
-      overflow: auto !important;
-    }
-    /* Hide number input arrows for cleaner PDF */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none;
-      margin: 0; 
-    }
-    input[type=number] {
-      -moz-appearance:textfield;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNL-Media | Social Media Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Work+Sans:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #082032;
+            --accent: #FF4C29;
+            --bg-dark: #080808;
+            --text-light: #ffffff;
+            --text-dim: #888888;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+        
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .custom-cursor {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--text-light);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        .custom-cursor.hover {
+            width: 64px;
+            height: 64px;
+            background-color: rgba(255, 76, 41, 0.2);
+            border-color: var(--accent);
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .content {
+            position: relative;
+            padding: 0 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .intro {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 0;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+            max-width: 800px;
+        }
+        
+        h1 span {
+            color: var(--accent);
+            display: block;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            line-height: 1.5;
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+        
+        .form-section {
+            padding: 6rem 0;
+            position: relative;
+        }
+        
+        .form-container {
+            background-color: rgba(8, 32, 50, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 6rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        
+        label i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .checkbox-item input {
+            width: 0;
+            height: a;
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover .custom-checkbox {
+            border-color: var(--primary);
+        }
+        
+        .checkbox-item input:checked + .custom-checkbox {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .checkbox-item input:checked + .custom-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .required-field::after {
+            content: '*';
+            color: var(--accent);
+            margin-left: 4px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+        
+        .floating-shape {
+            position: absolute;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            border-radius: 53% 47% 32% 68% / 70% 30% 70% 30%;
+            background: linear-gradient(45deg, var(--primary), transparent);
+            top: 10%;
+            left: -150px;
+            filter: blur(60px);
+        }
+        
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            border-radius: 24% 76% 35% 65% / 27% 69% 31% 73%;
+            background: linear-gradient(45deg, var(--accent), transparent);
+            bottom: 10%;
+            right: -200px;
+            filter: blur(80px);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .form-container {
+                padding: 1.5rem;
+            }
+            .checkbox-group {
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md px-8 py-10 mt-8 mb-8">
-    <div class="flex items-center mb-6">
-      <i class="fa-solid fa-paper-plane text-blue-600 text-3xl"></i>
-      <h1 class="text-2xl md:text-3xl font-bold text-blue-700 ml-3">Social Media Automation Project Questionnaire</h1>
+    <div class="custom-cursor"></div>
+    <div id="canvas-container"></div>
+    
+    <div class="content">
+        <header>
+            <div class="logo">TNL-<span>MEDIA</span></div>
+            <div class="menu">MENU</div>
+        </header>
+        
+        <section class="intro">
+            <h1>SOCIAL MEDIA <span>AUTOMATION</span></h1>
+            <p class="subtitle">Transform your social presence with our cutting-edge automation solutions. Complete the questionnaire below to get started.</p>
+        </section>
+        
+        <section class="form-section">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            
+            <div class="form-container">
+                <h2 class="section-title">PROJECT QUESTIONNAIRE</h2>
+                <p style="margin-bottom: 2rem;">Please complete this professional questionnaire to help us understand your social media automation project needs. Your email will be used to contact you about your project. All information remains confidential.</p>
+                
+                <form id="automation-form">
+                    <div class="form-group">
+                        <label for="email" class="required-field"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Your Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Full Name (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company"><i class="fas fa-building"></i> Company / Organization</label>
+                        <input type="text" id="company" class="form-control" placeholder="Company Name (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="platforms"><i class="fas fa-hashtag"></i> Which social media platforms do you want to automate?</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="Facebook">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-facebook"></i> Facebook
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="Instagram">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-instagram"></i> Instagram
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="Twitter">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-twitter"></i> Twitter/X
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="LinkedIn">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="TikTok">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-tiktok"></i> TikTok
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="YouTube">
+                                <span class="custom-checkbox"></span>
+                                <i class="fab fa-youtube"></i> YouTube
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="Rumble">
+                                <span class="custom-checkbox"></span>
+                                <i class="fas fa-video"></i> Rumble
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="platforms" value="Other">
+                                <span class="custom-checkbox"></span>
+                                <i class="fas fa-plus-circle"></i> Other
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="goals" class="required-field"><i class="fas fa-bullseye"></i> Project Goals</label>
+                        <textarea id="goals" class="form-control" placeholder="Briefly describe what you aim to automate or achieve (e.g., scheduled posting, analytics, responding to messages, etc.)" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="integration"><i class="fas fa-plug"></i> Do you need integration with other tools or platforms?</label>
+                        <input type="text" id="integration" class="form-control" placeholder="e.g., CRM, Email Marketing, Slack (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="budget"><i class="fas fa-wallet"></i> Estimated Budget</label>
+                        <select id="budget" class="form-control">
+                            <option value="">Select range (optional)</option>
+                            <option value="Under $1,000">Under $1,000</option>
+                            <option value="$1,000 - $5,000">$1,000 - $5,000</option>
+                            <option value="$5,000 - $10,000">$5,000 - $10,000</option>
+                            <option value="$10,000 - $20,000">$10,000 - $20,000</option>
+                            <option value="$20,000+">$20,000+</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeline"><i class="fas fa-calendar"></i> Desired Timeline</label>
+                        <input type="text" id="timeline" class="form-control" placeholder="e.g., 2 months, ASAP, flexible (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comments"><i class="fas fa-comment"></i> Additional Comments</label>
+                        <textarea id="comments" class="form-control" placeholder="Any other information or requirements? (optional)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Submit Questionnaire</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <footer>
+            © 2024 Social Media Automation | All rights reserved.
+        </footer>
     </div>
-    <p class="mb-8 text-gray-600 text-sm md:text-base">
-      Please complete this professional questionnaire to help us understand your social media automation project needs. Your email will be used to contact you about your project. All information remains confidential.
-    </p>
-    <form action="https://formspree.io/f/mrbqgkww" method="POST" class="space-y-6">
-      <div>
-        <label for="email" class="block font-medium required mb-1 text-blue-700"><i class="fa-solid fa-envelope"></i>Email Address</label>
-        <input type="email" id="email" name="Email" required class="w-full px-4 py-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-200" placeholder="your@email.com" autocomplete="email">
-      </div>
-      <div>
-        <label for="name" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-user"></i>Your Name</label>
-        <input type="text" id="name" name="Name" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="Full Name (optional)" autocomplete="name">
-      </div>
-      <div>
-        <label for="company" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-building"></i>Company / Organization</label>
-        <input type="text" id="company" name="Company" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="Company Name (optional)">
-      </div>
-      <div>
-        <label class="block font-medium mb-2 text-blue-700"><i class="fa-brands fa-hashtag"></i>Which social media platforms do you want to automate?</label>
-        <div class="flex flex-wrap gap-4">
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="Facebook" class="text-blue-600" />
-            <span><i class="fa-brands fa-facebook-f"></i>Facebook</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="Instagram" class="text-pink-500" />
-            <span><i class="fa-brands fa-instagram"></i>Instagram</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="Twitter/X" class="text-blue-400" />
-            <span><i class="fa-brands fa-x-twitter"></i>Twitter/X</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="LinkedIn" class="text-blue-700" />
-            <span><i class="fa-brands fa-linkedin-in"></i>LinkedIn</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="TikTok" class="text-black" />
-            <span><i class="fa-brands fa-tiktok"></i>TikTok</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="YouTube" class="text-red-600" />
-            <span><i class="fa-brands fa-youtube"></i>YouTube</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="Rumble" class="text-green-700" />
-            <span><i class="fa-regular fa-circle-play"></i>Rumble</span>
-          </label>
-          <label class="flex items-center space-x-1">
-            <input type="checkbox" name="Platforms" value="Other" />
-            <span>Other</span>
-          </label>
-        </div>
-      </div>
-      <div>
-        <label for="goals" class="block font-medium required mb-1 text-blue-700"><i class="fa-solid fa-bullseye"></i>Project Goals</label>
-        <textarea id="goals" name="Project Goals" required class="w-full px-4 py-2 border border-blue-200 rounded focus:ring-2 focus:ring-blue-200 resize-none" rows="3" placeholder="Briefly describe what you aim to automate or achieve (e.g., scheduled posting, analytics, responding to messages, etc.)"></textarea>
-      </div>
-      <div>
-        <label for="integrations" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-plug"></i>Do you need integration with other tools or platforms?</label>
-        <input type="text" id="integrations" name="Integrations" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="e.g., CRM, Email Marketing, Slack (optional)">
-      </div>
-      <div>
-        <label for="budget" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-money-bill-wave"></i>Estimated Budget</label>
-        <select id="budget" name="Estimated Budget" class="w-full px-4 py-2 border border-blue-200 rounded">
-          <option value="">Select range (optional)</option>
-          <option value="<$1,000">Less than $1,000</option>
-          <option value="$1,000 - $3,000">$1,000 - $3,000</option>
-          <option value="$3,000 - $10,000">$3,000 - $10,000</option>
-          <option value="$10,000+">$10,000+</option>
-        </select>
-      </div>
-      <div>
-        <label for="timeline" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-calendar-days"></i>Desired Timeline</label>
-        <input type="text" id="timeline" name="Desired Timeline" class="w-full px-4 py-2 border border-blue-200 rounded" placeholder="e.g., 2 months, ASAP, flexible (optional)">
-      </div>
-      <div>
-        <label for="comments" class="block font-medium mb-1 text-blue-700"><i class="fa-solid fa-comments"></i>Additional Comments</label>
-        <textarea id="comments" name="Additional Comments" class="w-full px-4 py-2 border border-blue-200 rounded resize-none" rows="2" placeholder="Any other information or requirements? (optional)"></textarea>
-      </div>
-      <div class="flex justify-center">
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg px-8 py-2 rounded shadow-md transition duration-150 flex items-center">
-          <i class="fa-solid fa-paper-plane mr-2"></i>Submit Questionnaire
-        </button>
-      </div>
-      <!-- Anti-bot for Formspree -->
-      <input type="text" name="_gotcha" style="display:none">
-    </form>
-    <div class="mt-8 text-center text-xs text-gray-400">
-      &copy; 2024 Social Media Automation | All rights reserved.
-    </div>
-  </div>
+    
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.custom-cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        const hoverElements = document.querySelectorAll('button, input, textarea, select, .checkbox-item, a');
+        
+        hoverElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+        
+        // Three.js WebGL Background
+        let scene, camera, renderer;
+        let particles;
+        
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+            
+            // Create particles
+            const particleCount = 200;
+            const particleGeometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const scales = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 10;
+                positions[i3 + 1] = (Math.random() - 0.5) * 10;
+                positions[i3 + 2] = (Math.random() - 0.5) * 10;
+                scales[i] = Math.random() * 0.5 + 0.1;
+            }
+            
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('scale', new THREE.BufferAttribute(scales, 1));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                color: 0x2563eb,
+                size: 0.1,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+            
+            camera.position.z = 5;
+            
+            window.addEventListener('resize', onWindowResize);
+            
+            animate();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (particles) {
+                particles.rotation.x += 0.0003;
+                particles.rotation.y += 0.0005;
+                
+                const time = Date.now() * 0.0005;
+                const positions = particles.geometry.attributes.position.array;
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    const x = positions[i];
+                    const y = positions[i + 1];
+                    const z = positions[i + 2];
+                    
+                    // Apply some subtle movement
+                    positions[i] = x + Math.sin(time + x) * 0.01;
+                    positions[i + 1] = y + Math.cos(time + y) * 0.01;
+                }
+                
+                particles.geometry.attributes.position.needsUpdate = true;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // GSAP animations for form elements
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Animate form groups
+            const formGroups = document.querySelectorAll('.form-group');
+            
+            formGroups.forEach((group, index) => {
+                gsap.to(group, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: group,
+                        start: "top 90%",
+                        toggleActions: "play none none none"
+                    },
+                    delay: index * 0.1
+                });
+            });
+            
+            // Animate title
+            gsap.from('h1', {
+                y: 100,
+                opacity: 0,
+                duration: 1.2,
+                ease: "power4.out"
+            });
+            
+            gsap.from('.subtitle', {
+                y: 50,
+                opacity: 0,
+                duration: 1.2,
+                delay: 0.3,
+                ease: "power4.out"
+            });
+            
+            // Animate shapes
+            gsap.to('.shape-1', {
+                x: 100,
+                rotation: 360,
+                duration: 40,
+                repeat: -1,
+                ease: "none"
+            });
+            
+            gsap.to('.shape-2', {
+                x: -100,
+                rotation: -360,
+                duration: 50,
+                repeat: -1,
+                ease: "none"
+            });
+        }
+        
+        // Form submission
+        document.getElementById('automation-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for submitting the questionnaire! We will contact you soon.');
+        });
+        
+        // Initialize all
+        window.addEventListener('DOMContentLoaded', () => {
+            initThree();
+            initAnimations();
+        });
+    </script>
 </body>
 </html>
-
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDuvnoRoKJBf%2FeHBYatvqKFZF3vxopvG3FR12D1zBJJoq6XfujxhxrBwPI7qpVD25j2Ctyi23QChlrtbAeEkcrEUZd4cxAGaFUKQRep8LgUUxV13Ixbd0XoYuZLNbsZ9MBzwCkbp4i9UL7W6r0zKSf5KNIssbIfA1%2BsyS9%2FJygsC4ToRrlFkTba7aChDZOloo%2BsSYOyJYkeRdTF6kZCsAls1a%2FqFVmfcnnWb0aVCAVy9ykbwhfFxPgWBal2q26PcrIQKeVXwKRibW2CsZ2ByvoJSsKdGl3gI1AA2wELLEyMPC6VC35ipI8mv4O%2BsbC3b9d34A5JhIhLyO%2FjvByUI0o%2FbASrZqi6XPFXSUGOb63AKZoraIogjh1rKmWv9y1TzQ%2FY%2BYQfseHWGqGTl55QN7HPZLQoEFtgmA79HJp%2FBejzajrK9vcxadNu7ZhqxCSCvnwlOs8iNDO7ZckVr0OXnUdDyQVrDJeIm3nF44d4p2pF4tx8jKPdq522BELoFryhjIGK1OBizZKKbdeQNjHRSerQU%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDuvnoRoKJBf/eHBYatvqKFZF3vxopvG3FR12D1zBJJoq6XfujxhxrBwPI7qpVD25j2Ctyi23QChlrtbAeEkcrEUZd4cxAGaFUKQRep8LgUUxV13Ixbd0XoYuZLNbsZ9MBzwCkbp4i9UL7W6r0zKSf5KNIssbIfA1+syS9/JygsC4ToRrlFkTba7aChDZOloo+sSYOyJYkeRdTF6kZCsAls1a/qFVmfcnnWb0aVCAVy9ykbwhfFxPgWBal2q26PcrIQKeVXwKRibW2CsZ2ByvoJSsKdGl3gI1AA2wELLEyMPC6VC35ipI8mv4O+sbC3b9d34A5JhIhLyO/jvByUI0o/bASrZqi6XPFXSUGOb63AKZoraIogjh1rKmWv9y1TzQ/Y+YQfseHWGqGTl55QN7HPZLQoEFtgmA79HJp/BejzajrK9vcxadNu7ZhqxCSCvnwlOs8iNDO7ZckVr0OXnUdDyQVrDJeIm3nF44d4p2pF4tx8jKPdq522BELoFryhjIGK1OBizZKKbdeQNjHRSerQU=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
